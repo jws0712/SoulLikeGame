@@ -5,25 +5,54 @@ using UnityEngine.Assertions.Must;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] float moveSpeed;
+    [SerializeField] float WalkSpeed;
     [SerializeField] float sprintSpeed;
+    private float moveSpeed;
     private Rigidbody rb;
-    // Start is called before the first frame update
+    private Animator anim;
+    private Vector3 dir;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
+
+        moveSpeed = WalkSpeed;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            moveSpeed = sprintSpeed;
+            Debug.Log("¶Ü");
+        }
+        else
+        {
+            moveSpeed = WalkSpeed;
+            Debug.Log("°É¾î");
+        }
 
-        Vector3 dir = (Vector3.forward * vertical)+(Vector3.right * horizontal);
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
 
-        transform.Translate(dir.normalized * moveSpeed * Time.deltaTime);
+        dir = (Vector3.forward * vertical + Vector3.right * horizontal).normalized;
 
-        Debug.Log(dir);
+        transform.LookAt(transform.position + dir);
+
+        if(dir != Vector3.zero)
+        {
+            anim.SetBool("IsMove", true);
+        }
+        else
+        {
+            anim.SetBool("IsMove", false);
+        }
+
+        anim.SetFloat("MoveSpeed", moveSpeed);
+    }
+    private void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + dir * moveSpeed * Time.deltaTime);
     }
 }

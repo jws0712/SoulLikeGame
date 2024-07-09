@@ -4,7 +4,9 @@ namespace SOUL.Player
     //System
     using System.Collections;
     using System.Collections.Generic;
+    using System.Text;
     using Unity.VisualScripting;
+    using Unity.VisualScripting.FullSerializer;
 
     //UnityEngine
     using UnityEngine;
@@ -12,17 +14,28 @@ namespace SOUL.Player
     
     public class Player : MonoBehaviour
     {
-        [SerializeField] float WalkSpeed;
-        [SerializeField] float sprintSpeed;
-        [SerializeField] float smoothTime = 0.05f;
+        [Header("PlayerMovementSetting")]
+        [SerializeField] private float WalkSpeed = default;
+        [SerializeField] private float sprintSpeed = default;
+        [SerializeField] private float spinSpeed = default;
+        [Header("PlayerCameraSetting")]
+        [SerializeField] private Camera mainCamera = default;
+
+
        
 
         //private variable
         private float moveSpeed;
+        private float currentVelocity;
+        private float targetAngle;
+        private float angle;
+
         private Rigidbody rb;
         private Animator anim;
+
         private Vector3 dir;
-        private float currentVelocity;
+        private Vector3 lastDirection;
+
 
 
         private void Start()
@@ -32,6 +45,8 @@ namespace SOUL.Player
 
             moveSpeed = WalkSpeed;
         }
+        
+
         private void Update()
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
@@ -40,11 +55,19 @@ namespace SOUL.Player
             if (horizontal == 0f && vertical == 0f)
             {
                 dir = Vector3.zero;
-                anim.SetBool("IsMove", false);
+                
                 moveSpeed = 0f;
+
                 anim.SetFloat("MoveSpeed", moveSpeed);
+                anim.SetBool("IsMove", false);
+
+                if (lastDirection != Vector3.zero)
+                {
+                    PlayerRotate(lastDirection);
+                }
+
                 return;
-            } 
+            }
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
@@ -55,20 +78,40 @@ namespace SOUL.Player
                 moveSpeed = WalkSpeed;
             }
 
-            dir = (Vector3.forward * vertical + Vector3.right * horizontal).normalized;
+            Vector3 forward = mainCamera.transform.forward;
 
-            var targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-            var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref currentVelocity, smoothTime);
-            transform.rotation = Quaternion.Euler(0, angle, 0);
+            Vector3 right = mainCamera.transform.right;
+
+            forward.y = 0f;
+            forward.Normalize();
+
+            //방향을 저장한다
+            dir = (forward * vertical + right * horizontal).normalized;
+
+            //마지막 방향을 저장한다
+            lastDirection = dir;
+
+            PlayerRotate(dir);
 
             anim.SetBool("IsMove", true);
             anim.SetFloat("MoveSpeed", moveSpeed);
         }
 
-
         private void FixedUpdate()
         {
-            rb.MovePosition(rb.position + dir * moveSpeed * Time.deltaTime);
+            rb.MovePosition(rb.position + moveSpeed * Time.deltaTime * dir);
+        }
+
+        /// <summary>
+        /// 플레이어를 회전시키는 함수
+        /// </summary>
+        private void PlayerRotate(Vector3 direction)
+        {
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+
+            float angle = Mathf.SmoothDampAngle(transform.localEulerAngles.y, targetAngle, ref currentVelocity, spinSpeed);
+
+            transform.localRotation = Quaternion.Euler(0, angle, 0);
         }
     }
 }

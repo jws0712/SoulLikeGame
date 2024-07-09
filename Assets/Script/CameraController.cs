@@ -4,16 +4,15 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    public float Yaxis;
-    public float Xaxis;
+    [SerializeField] private float rotSensitive = 3f;
+    [SerializeField] private float dis = 5f;
+    [SerializeField] private float RotationMin = -10f;
+    [SerializeField] private float RotationMax = 80f;
+    [SerializeField] private float smoothTime = 0.12f;
+    [SerializeField] private Transform target;
 
-    public Transform target;
-
-    private const float rotSensitive = 3f;
-    private const float dis = 5f;
-    private const float RotationMin = -10f;
-    private const float RotationMax = 80f;
-    private const float smoothTime = 0.12f;
+    private float Yaxis;
+    private float Xaxis;
 
     private Vector3 targetRotation;
     private Vector3 currentVel;

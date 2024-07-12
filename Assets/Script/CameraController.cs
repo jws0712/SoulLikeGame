@@ -18,7 +18,7 @@ namespace SOUL.Camera
         [SerializeField] private float smoothTime = 0.12f;
         [SerializeField] private float spinSpeed = default;
 
-        public Transform target;
+        public Transform player;
         public Transform cameraPos;
 
 
@@ -40,8 +40,7 @@ namespace SOUL.Camera
 
         private void Update()
         {
-            LookEnemy();
-
+            SensEnemy();
         }
 
 
@@ -50,17 +49,7 @@ namespace SOUL.Camera
         {
             if (isSens)
             {
-
-                transform.position = cameraPos.position;
-
-                direction = nearEnemy.transform.position - transform.position;
-
-                float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-
-                targetRot = Quaternion.Euler(0, targetAngle, 0);
-
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * spinSpeed);
-
+                LookEnemy();
                 return;
             }
 
@@ -70,7 +59,7 @@ namespace SOUL.Camera
         /// <summary>
         /// 적을 쳐다보는 함수
         /// </summary>
-        private void LookEnemy()
+        private void SensEnemy()
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
@@ -79,6 +68,8 @@ namespace SOUL.Camera
 
             if (!isSens)
             {
+
+
                 Collider[] enemys = Physics.OverlapSphere(transform.position, sensDistance, sensLayer);
 
                 if (enemys.Length > 0)
@@ -100,6 +91,19 @@ namespace SOUL.Camera
             }
         }
 
+        private void LookEnemy()
+        {
+            transform.position = player.position - transform.forward * dis;
+
+            direction = nearEnemy.transform.position - transform.position;
+
+            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+
+            targetRot = Quaternion.Euler(0, targetAngle, 0);
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * spinSpeed);
+        }
+
         /// <summary>
         /// 마우스에 따라 카메라를 움직이는 함수
         /// </summary>
@@ -113,7 +117,7 @@ namespace SOUL.Camera
             targetRotation = Vector3.SmoothDamp(targetRotation, new Vector3(Xaxis, Yaxis), ref currentVel, smoothTime);
             this.transform.eulerAngles = targetRotation;
 
-            transform.position = target.position - transform.forward * dis;
+            transform.position = player.position - transform.forward * dis;
         }
 
         private void OnDrawGizmos()

@@ -114,7 +114,7 @@ namespace SOUL.Camera
 
             Xaxis = Mathf.Clamp(Xaxis, RotationMin, RotationMax);
 
-            targetRotation = Vector3.SmoothDamp(targetRotation, new Vector3(Xaxis, Yaxis), ref currentVel, smoothTime);
+            targetRotation = new Vector3(Xaxis, Yaxis);
             this.transform.eulerAngles = targetRotation;
 
             transform.position = player.position - transform.forward * dis;

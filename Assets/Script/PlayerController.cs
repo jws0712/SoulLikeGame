@@ -49,10 +49,7 @@ namespace SOUL.Player
 
             if (playerInput.Horizontal == 0f && playerInput.Vertical == 0f)
             {
-                playerView.dir = Vector3.zero;
-                
                 moveSpeed = 0f;
-
 
                 anim.SetBool("IsMove", false);
                 anim.SetFloat("MoveSpeed", moveSpeed);
@@ -79,12 +76,18 @@ namespace SOUL.Player
 
         private void FixedUpdate()
         {
-            rb.MovePosition(rb.position + moveSpeed * Time.deltaTime * playerView.dir);
+            rb.MovePosition(rb.position + moveSpeed * Time.deltaTime * playerView.Dir);
         }
 
         private void PlayerRot()
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, playerView.transform.rotation, Time.deltaTime * spinSpeed);
+            float yRotation = playerView.transform.rotation.eulerAngles.y; //플레이어뷰의 오일러의 y값을 가지고 옴
+
+            Vector3 currentEuler = transform.rotation.eulerAngles; //현재 회전값을 가지고옴
+
+            Quaternion targetRotation = Quaternion.Euler(currentEuler.x, yRotation, currentEuler.z);
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * spinSpeed);
         }
 
 

@@ -1,5 +1,6 @@
 namespace SOUL.Camera
 {
+    using SOUL.Player;
     using System.Collections;
     using System.Collections.Generic;
     using Unity.VisualScripting;
@@ -15,11 +16,17 @@ namespace SOUL.Camera
         [SerializeField] private float RotationMax = 80f;
         [SerializeField] private Transform target = null;
         [SerializeField] private Camera mainCamera = null;
+        [SerializeField] private float cameraChaseTime = default;
 
-        public float Yaxis = default;
-        public float Xaxis = default;
+        [Header("Script")]
+        [SerializeField] private PlayerView playerView = null;
 
+        private float Yaxis = default;
+        private float Xaxis = default;
         private Vector3 targetRotation = default;
+
+        //프로퍼티
+        public float Dis => dis;
 
         private void Start()
         {
@@ -28,7 +35,14 @@ namespace SOUL.Camera
 
         private void LateUpdate()
         {
-            CameraMovement();
+            if (playerView.IsSens == false)
+            {
+                CameraMovement();
+            }
+            else if(playerView.IsSens == true && playerView.NearEnemy != null)
+            {
+                LockDir();
+            }
         }
 
         /// <summary>
@@ -48,6 +62,14 @@ namespace SOUL.Camera
 
             mainCamera.transform.LookAt(target.position);
             
+        }
+
+        private void LockDir()
+        {
+
+            transform.forward = target.forward;
+            transform.position = target.position - transform.forward * dis;
+            Debug.Log("고정");
         }
     }
 }

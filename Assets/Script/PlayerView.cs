@@ -1,13 +1,16 @@
 namespace SOUL.Player
 {
+    using SOUL.Camera;
 
     //System
     using System.Collections;
     using System.Collections.Generic;
+    using System.Net;
     using System.Text;
 
     //UnityEngine
     using UnityEngine;
+    using static UnityEngine.GraphicsBuffer;
 
     public class PlayerView : MonoBehaviour
     {
@@ -16,24 +19,32 @@ namespace SOUL.Player
         [SerializeField] private LayerMask sensLayer = default;
         [Header("ViewSetting")]
         [SerializeField] private Camera mainCamera = null;
-        [SerializeField] private PlayerInput playerInput = null;
         [SerializeField] private Transform playerViewPos = null;
+        [Header("ProjectScript")]
+        [SerializeField] private PlayerInput playerInput = null;
+        [SerializeField] private CameraController cameraController = null;
 
         private bool isSens = default;
         private Collider nearEnemy = default;
         private Vector3 forward = default;
         private Vector3 right = default;
+        private Vector3 dir = default;
+
 
 
         //프로퍼티
         public bool IsSens => isSens;
+        public Vector3 Dir => dir;
+
         public Collider NearEnemy => nearEnemy;
-
-
-        public Vector3 dir = default;
 
         private void Update()
         {
+            if (playerInput.Horizontal == 0f && playerInput.Vertical == 0f)
+            {   
+                dir = Vector3.zero;
+            }
+
             transform.position = playerViewPos.position;
 
             SensEnemy();
@@ -41,7 +52,7 @@ namespace SOUL.Player
 
             transform.LookAt(transform.position + dir);
 
-            if (isSens)
+            if (isSens && nearEnemy != null)
             {
                 transform.LookAt(nearEnemy.transform);
             }
@@ -70,11 +81,14 @@ namespace SOUL.Player
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
+                cameraController.transform.forward = transform.forward;
+                cameraController.transform.position = transform.position - transform.forward * cameraController.Dis;
                 isSens = !isSens;
             }
 
             if (isSens)
             {
+                
                 return;
             }
 

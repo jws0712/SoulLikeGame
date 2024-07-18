@@ -169,13 +169,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotSensitive: 3
-  dis: 5
-  RotationMin: -10
+  dis: 2.5
+  RotationMin: -20
   RotationMax: 80
   target: {fileID: 970996032}
   mainCamera: {fileID: 963194227}
-  Yaxis: 0
-  Xaxis: 0
+  cameraChaseTime: 5
+  playerView: {fileID: 970996033}
 --- !u!1 &135811973
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,8 +402,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1875914318}
   - {fileID: 970996032}
+  - {fileID: 1875914318}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
@@ -584,7 +584,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 66
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -710,9 +710,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   mainCamera: {fileID: 963194227}
-  playerInput: {fileID: 1875914322}
   playerViewPos: {fileID: 1281197877}
-  dir: {x: 0, y: 0, z: 0}
+  playerInput: {fileID: 1875914322}
+  cameraController: {fileID: 105673454}
 --- !u!1 &1281197876
 GameObject:
   m_ObjectHideFlags: 0
@@ -738,7 +738,7 @@ Transform:
   m_GameObject: {fileID: 1281197876}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.65, z: 0}
+  m_LocalPosition: {x: 0, y: 1.683, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

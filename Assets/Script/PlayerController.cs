@@ -46,13 +46,13 @@ namespace SOUL.Player
 
         private void Update()
         {
+            anim.SetFloat("Horizontal", playerInput.Horizontal);
+            anim.SetFloat("MoveSpeed", moveSpeed);
+            anim.SetBool("isSens", playerView.IsSens);
 
             if (playerInput.Horizontal == 0f && playerInput.Vertical == 0f)
             {
                 moveSpeed = 0f;
-
-                anim.SetBool("IsMove", false);
-                anim.SetFloat("MoveSpeed", moveSpeed);
 
                 PlayerRot();
 
@@ -68,10 +68,7 @@ namespace SOUL.Player
                 moveSpeed = WalkSpeed;
             }
 
-            PlayerRot();
-
-            anim.SetBool("IsMove", true);
-            anim.SetFloat("MoveSpeed", moveSpeed);
+            PlayerRot();            
         }
 
         private void FixedUpdate()

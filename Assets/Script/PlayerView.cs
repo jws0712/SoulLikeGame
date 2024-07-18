@@ -81,8 +81,6 @@ namespace SOUL.Player
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                cameraController.transform.forward = transform.forward;
-                cameraController.transform.position = transform.position - transform.forward * cameraController.Dis;
                 isSens = !isSens;
             }
 

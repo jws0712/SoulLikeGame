@@ -71,9 +71,10 @@ namespace SOUL.Player
             PlayerRot();            
         }
 
-        private void FixedUpdate()
+        private void OnAnimatorMove()
         {
-            rb.MovePosition(rb.position + moveSpeed * Time.deltaTime * playerView.Dir);
+            Vector3 newPosition = rb.position + anim.deltaPosition;
+            rb.MovePosition(newPosition);
         }
 
         private void PlayerRot()

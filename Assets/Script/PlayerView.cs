@@ -18,11 +18,9 @@ namespace SOUL.Player
         [SerializeField] private float sensDistance = default;
         [SerializeField] private LayerMask sensLayer = default;
         [Header("ViewSetting")]
-        [SerializeField] private Camera mainCamera = null;
         [SerializeField] private Transform playerViewPos = null;
         [Header("ProjectScript")]
         [SerializeField] private PlayerInput playerInput = null;
-        [SerializeField] private CameraController cameraController = null;
 
         private bool isSens = default;
         private Collider nearEnemy = default;
@@ -30,6 +28,7 @@ namespace SOUL.Player
         private Vector3 right = default;
         private Vector3 dir = default;
 
+        private Camera mainCamera = null;
 
 
         //프로퍼티
@@ -38,6 +37,12 @@ namespace SOUL.Player
 
         public Collider NearEnemy => nearEnemy;
 
+        private void Start()
+        {
+            mainCamera = Camera.main;
+            transform.position = playerViewPos.position;
+        }
+
         private void Update()
         {
             if (playerInput.Horizontal == 0f && playerInput.Vertical == 0f)
@@ -45,12 +50,10 @@ namespace SOUL.Player
                 dir = Vector3.zero;
             }
 
-            transform.position = playerViewPos.position;
-
             SensEnemy();
             MakeDirection();
 
-            transform.LookAt(transform.position + dir);
+            transform.LookAt(playerViewPos.position + dir);
 
             if (isSens && nearEnemy != null)
             {

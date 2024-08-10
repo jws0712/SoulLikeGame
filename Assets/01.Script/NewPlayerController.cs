@@ -1,4 +1,5 @@
 using SOUL.Player;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,7 +9,9 @@ using UnityEngine.EventSystems;
 public class NewPlayerController : MonoBehaviour
 {
     [Header("PlayerMovementSetting")]
+    [SerializeField] private float airMoveSpeed = default;
     [SerializeField] private float spinSpeed = default;
+    [SerializeField] private float jumpPower = default;
     [SerializeField] private PlayerView playerView = null;
     [SerializeField] private float gravityMultiplier = default;
 
@@ -17,6 +20,7 @@ public class NewPlayerController : MonoBehaviour
     private float moveAmount = default;
     private float inputMagnitude = default;
     private float pressTime = default;
+    
 
     private PlayerInput playerInput = null;
     private Animator anim;
@@ -24,10 +28,9 @@ public class NewPlayerController : MonoBehaviour
 
     private Quaternion lastTargetRot = Quaternion.identity;
 
-    private bool isRun = default;
-    private bool isRoll = default;
-    private bool isJump = default;
     private bool isPress = default;
+    private bool isJump = default;
+    private bool isGround = default;
 
 
 
@@ -44,36 +47,9 @@ public class NewPlayerController : MonoBehaviour
         inputMagnitude = playerView.Dir.magnitude;                                          //플레이어의 방향값의 크기를 구함
         moveAmount = Mathf.Abs(playerInput.Horizontal) + Mathf.Abs(playerInput.Vertical);   // 플레이어가 이동한 거리의 절대값을 계산함
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            isPress = true;
-        }
-
-        if (isPress && Input.GetKey(KeyCode.Space))
-        {
-            pressTime += Time.deltaTime;
-
-            if (pressTime > 0.5f)
-            {
-                inputMagnitude /= 2;
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            isPress = false;
-
-            if (pressTime < 0.5f)
-            {
-                anim.SetTrigger("roll");
-            }
-
-            pressTime = 0;
-
-        }
-
-        MakeGravity();
+        PlayerAction();
         SetPlayerAnimationState();
+        AirMove();
     }
 
     #region PlayerFunc
@@ -82,9 +58,27 @@ public class NewPlayerController : MonoBehaviour
     /// </summary>
     private void OnAnimatorMove()
     {
-        Vector3 vel = anim.deltaPosition;
-        vel.y = gravity * Time.deltaTime;
-        cc.Move(vel);
+        if (isGround)
+        {
+            Vector3 vel = anim.deltaPosition;
+            vel.y = gravity * Time.deltaTime;
+            cc.Move(vel);
+        }
+
+    }
+
+    /// <summary>
+    /// 플레이어가 공중에 있을때 움직임
+    /// </summary>
+    private void AirMove()
+    {
+        if(!isGround)
+        {
+            Vector3 vel = playerView.Dir * inputMagnitude * airMoveSpeed;
+            vel.y = gravity;
+
+            cc.Move(vel * Time.deltaTime);
+        }
     }
 
     /// <summary>
@@ -122,18 +116,82 @@ public class NewPlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 중력을 만든다
+    /// 플레이어 점프
     /// </summary>
-    private void MakeGravity()
+    private void Jump()
     {
         if (cc.isGrounded)
         {
             gravity = -2f;
+
+            anim.SetBool("isGround", true);
+            isGround = true;
+            anim.SetBool("isJump", false);
+            isJump = false;
+            anim.SetBool("isFall", false);
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                gravity = jumpPower;
+                anim.SetBool("isJump", true);
+                isJump = true;
+            }
         }
         else
         {
             gravity += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
+            anim.SetBool("isGround", false);
+            isGround = false;
+            if((isJump && gravity < 0) || gravity < -2f)
+            {
+                anim.SetBool("isFall", true);
+            }
+
         }
+    }
+
+    /// <summary>
+    /// 플레이어 구르기
+    /// </summary>
+    private void Roll()
+    {
+        anim.SetTrigger("roll");
+    }
+
+    /// <summary>
+    /// 플레이어의 행동을 관리한다
+    /// </summary>
+    private void PlayerAction()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            isPress = true;
+        }
+
+        if (isPress && Input.GetKey(KeyCode.Space))
+        {
+            pressTime += Time.deltaTime;
+
+            if (pressTime > 0.5f)
+            {
+                inputMagnitude /= 2;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isPress = false;
+
+            if (pressTime < 0.5f)
+            {
+                Roll();
+            }
+
+            pressTime = 0;
+
+        }
+
+        Jump();
     }
     #endregion
 

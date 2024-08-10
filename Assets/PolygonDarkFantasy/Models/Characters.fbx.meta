@@ -30,19 +30,7 @@ ModelImporter:
       animation that will be discarded.\n\t'Clavicle_R' has translation animation
       that will be discarded.\n\t'UpperLeg_R' has translation animation that will
       be discarded.\n"
-    animationRetargetingWarnings: "\nRetargeting quality report for clip 'Take 001':\n\tRightLowerLeg
-      average position error 0.4 mm and maximum position error 4.4 mm at time 2:21
-      (97.6%) Frame 81\n\tRightFoot average position error 0.1 mm and maximum position
-      error 4.9 mm at time 2:21 (97.6%) Frame 81\n\tLeftUpperArm average position
-      error 0.2 mm and maximum position error 14.0 mm at time 2:21 (97.6%) Frame
-      81\n\tLeftLowerArm average position error 0.4 mm and maximum position error
-      14.2 mm at time 2:21 (97.6%) Frame 81\n\tLeftHand average position error 0.2
-      mm and maximum position error 14.0 mm at time 2:21 (97.6%) Frame 81\n\tRightUpperArm
-      average position error 0.3 mm and maximum position error 17.6 mm at time 2:22
-      (98.8%) Frame 82\n\tRightLowerArm average position error 0.5 mm and maximum
-      position error 17.6 mm at time 2:22 (98.8%) Frame 82\n\tRightHand average position
-      error 0.3 mm and maximum position error 17.6 mm at time 2:22 (98.8%) Frame
-      82\n"
+    animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
@@ -121,7 +109,7 @@ ModelImporter:
     useFileScale: 1
     strictVertexDataChecks: 0
   tangentSpace:
-    normalSmoothAngle: 180
+    normalSmoothAngle: 0
     normalImportMode: 1
     tangentImportMode: 3
     normalCalculationMode: 4

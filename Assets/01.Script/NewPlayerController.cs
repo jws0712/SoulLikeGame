@@ -16,12 +16,20 @@ public class NewPlayerController : MonoBehaviour
     private float gravity = default;
     private float moveAmount = default;
     private float inputMagnitude = default;
+    private float pressTime = default;
 
     private PlayerInput playerInput = null;
     private Animator anim;
     private CharacterController cc;
 
     private Quaternion lastTargetRot = Quaternion.identity;
+
+    private bool isRun = default;
+    private bool isRoll = default;
+    private bool isJump = default;
+    private bool isPress = default;
+
+
 
     //컴포넌트 초기화
     private void Awake()
@@ -36,19 +44,35 @@ public class NewPlayerController : MonoBehaviour
         inputMagnitude = playerView.Dir.magnitude;                                          //플레이어의 방향값의 크기를 구함
         moveAmount = Mathf.Abs(playerInput.Horizontal) + Mathf.Abs(playerInput.Vertical);   // 플레이어가 이동한 거리의 절대값을 계산함
 
-        PlayerRoll();
-
-        if(cc.isGrounded)
+        if(Input.GetKeyDown(KeyCode.Space))
         {
-            gravity = -2f;
-        }
-        else
-        {
-            gravity += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
+            isPress = true;
         }
 
-        Debug.Log(gravity);
+        if (isPress && Input.GetKey(KeyCode.Space))
+        {
+            pressTime += Time.deltaTime;
 
+            if (pressTime > 0.5f)
+            {
+                inputMagnitude /= 2;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isPress = false;
+
+            if (pressTime < 0.5f)
+            {
+                anim.SetTrigger("roll");
+            }
+
+            pressTime = 0;
+
+        }
+
+        MakeGravity();
         SetPlayerAnimationState();
     }
 
@@ -85,11 +109,6 @@ public class NewPlayerController : MonoBehaviour
             anim.SetBool("isMove", false);
         }
 
-        if (Input.GetKey(KeyCode.Space))
-        {
-            inputMagnitude /= 2;
-        }
-
         anim.SetFloat("Input Magnitude", inputMagnitude, 0.05f, Time.deltaTime);
     }
 
@@ -103,13 +122,17 @@ public class NewPlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어 구르기를 구현한 함수
+    /// 중력을 만든다
     /// </summary>
-    private void PlayerRoll()
+    private void MakeGravity()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
+        if (cc.isGrounded)
         {
-            anim.SetTrigger("roll");
+            gravity = -2f;
+        }
+        else
+        {
+            gravity += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
         }
     }
     #endregion

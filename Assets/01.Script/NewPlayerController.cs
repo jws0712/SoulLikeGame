@@ -30,6 +30,7 @@ public class NewPlayerController : MonoBehaviour
 
     private bool isPress = default;
     private bool isJump = default;
+    private bool isAction = default;
     private bool isGround = default;
 
 
@@ -104,6 +105,13 @@ public class NewPlayerController : MonoBehaviour
         }
 
         anim.SetFloat("Input Magnitude", inputMagnitude, 0.05f, Time.deltaTime);
+        anim.SetBool("isAction", isAction);
+
+        if (!isGround)
+        {
+            anim.SetFloat("VelY", gravity);
+        }
+        
     }
 
     /// <summary>
@@ -112,7 +120,10 @@ public class NewPlayerController : MonoBehaviour
     /// <param name="targetRot"></param>
     private void PlayerRotate(Quaternion targetRot)
     {
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, spinSpeed * Time.deltaTime);
+        if (!isAction)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, spinSpeed * Time.deltaTime);
+        }
     }
 
     /// <summary>
@@ -130,7 +141,7 @@ public class NewPlayerController : MonoBehaviour
             isJump = false;
             anim.SetBool("isFall", false);
 
-            if (Input.GetKeyDown(KeyCode.F))
+            if (!isAction && Input.GetKeyDown(KeyCode.F))
             {
                 gravity = jumpPower;
                 anim.SetBool("isJump", true);
@@ -174,7 +185,7 @@ public class NewPlayerController : MonoBehaviour
 
             if (pressTime > 0.5f)
             {
-                inputMagnitude /= 2;
+                inputMagnitude *= 2;
             }
         }
 
@@ -182,7 +193,7 @@ public class NewPlayerController : MonoBehaviour
         {
             isPress = false;
 
-            if (pressTime < 0.5f)
+            if (!isAction && cc.isGrounded && pressTime < 0.5f)
             {
                 Roll();
             }
@@ -192,7 +203,18 @@ public class NewPlayerController : MonoBehaviour
         }
 
         Jump();
+
+        
     }
     #endregion
 
+    public void StartAction()
+    {
+        isAction = true;
+    }
+
+    public void EndAction()
+    {
+        isAction = false;
+    }
 }

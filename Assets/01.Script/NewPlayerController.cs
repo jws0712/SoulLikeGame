@@ -12,8 +12,11 @@ public class NewPlayerController : MonoBehaviour
     [SerializeField] private float airMoveSpeed = default;
     [SerializeField] private float spinSpeed = default;
     [SerializeField] private float jumpPower = default;
-    [SerializeField] private PlayerView playerView = null;
     [SerializeField] private float gravityMultiplier = default;
+    [SerializeField] private PlayerView playerView = null;
+    [Space(20f)]
+    [Header("Physics")]
+    [SerializeField] private float groundedGravity = default;
 
 
     private float gravity = default;
@@ -21,12 +24,14 @@ public class NewPlayerController : MonoBehaviour
     private float inputMagnitude = default;
     private float pressTime = default;
     
+    
 
     private PlayerInput playerInput = null;
     private Animator anim;
     private CharacterController cc;
 
     private Quaternion lastTargetRot = Quaternion.identity;
+
 
     private bool isPress = default;
     private bool isJump = default;
@@ -131,18 +136,25 @@ public class NewPlayerController : MonoBehaviour
     /// </summary>
     private void Jump()
     {
+
+
         if (cc.isGrounded)
         {
-            gravity = -2f;
-
             anim.SetBool("isGround", true);
             isGround = true;
+
             anim.SetBool("isJump", false);
             isJump = false;
+
             anim.SetBool("isFall", false);
+
+
+            gravity = -groundedGravity;
+
 
             if (!isAction && Input.GetKeyDown(KeyCode.F))
             {
+                isGround = false;
                 gravity = jumpPower;
                 anim.SetBool("isJump", true);
                 isJump = true;
@@ -150,15 +162,26 @@ public class NewPlayerController : MonoBehaviour
         }
         else
         {
-            gravity += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
+            if (isGround)
+            {
+                gravity = 0;
+                isGround = false;
+            }
+
             anim.SetBool("isGround", false);
-            isGround = false;
-            if((isJump && gravity < 0) || gravity < -2f)
+            gravity += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
+
+
+            
+
+            if((isJump && gravity < 0) || gravity < -groundedGravity)
             {
                 anim.SetBool("isFall", true);
             }
 
         }
+
+        Debug.Log(cc.isGrounded);
     }
 
     /// <summary>
@@ -174,6 +197,8 @@ public class NewPlayerController : MonoBehaviour
     /// </summary>
     private void PlayerAction()
     {
+        Jump();
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             isPress = true;
@@ -201,12 +226,8 @@ public class NewPlayerController : MonoBehaviour
             pressTime = 0;
 
         }
-
-        Jump();
-
-        
     }
-    #endregion
+
 
     public void StartAction()
     {
@@ -217,4 +238,6 @@ public class NewPlayerController : MonoBehaviour
     {
         isAction = false;
     }
+
+    #endregion
 }

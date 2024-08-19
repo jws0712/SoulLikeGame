@@ -25,14 +25,6 @@ namespace SOUL.Camera
         private float Xaxis = default;
         private Vector3 targetRotation = default;
 
-        //프로퍼티
-        public float Dis => dis;
-
-        private void Start()
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-
         private void LateUpdate()
         {
             if (playerView.IsSens == false)

@@ -71,6 +71,7 @@ public class NewPlayerController : MonoBehaviour
 
     private void Update()
     {
+        enableFeetIK = !isAction;
         inputMagnitude = playerView.Dir.magnitude;                                          //플레이어의 방향값의 크기를 구함
         moveAmount = Mathf.Abs(playerInput.Horizontal) + Mathf.Abs(playerInput.Vertical);   // 플레이어가 이동한 거리의 절대값을 계산함
 
@@ -187,6 +188,7 @@ public class NewPlayerController : MonoBehaviour
             {
                 gravity = 0;
                 isGround = false;
+                anim.SetBool("isFall", true);
             }
 
             anim.SetBool("isGround", false);
@@ -287,7 +289,7 @@ public class NewPlayerController : MonoBehaviour
 
         if(useProIkFeature)
         {
-            anim.SetIKRotationWeight(AvatarIKGoal.RightFoot, anim.GetFloat(rightFootAnimVariableName));
+            anim.SetIKRotationWeight(AvatarIKGoal.RightFoot, 1f);
             Debug.Log("Left_Pro");
         }
         MoveFeetToIkPoint(AvatarIKGoal.RightFoot, rightFootIkPosition, rightFootIkRotation, ref lastRightFootPositionY);
@@ -297,7 +299,7 @@ public class NewPlayerController : MonoBehaviour
 
         if (useProIkFeature)
         {
-            anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, anim.GetFloat(leftFootAnimVariableName));
+            anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 1f);
             Debug.Log("Left_Pro");
         }
         MoveFeetToIkPoint(AvatarIKGoal.LeftFoot, leftFootIkPosition, leftFootIkRotation, ref lastLeftFootPositionY);

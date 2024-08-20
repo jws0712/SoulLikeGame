@@ -251,7 +251,7 @@ MonoBehaviour:
   feetToIkPositionSpeed: 0.5
   leftFootAnimVariableName: LeftFootCurve
   rightFootAnimVariableName: RightFootCurve
-  useProIkFeature: 0
+  useProIkFeature: 1
   showSolverDebug: 1
 --- !u!1 &76650698
 GameObject:

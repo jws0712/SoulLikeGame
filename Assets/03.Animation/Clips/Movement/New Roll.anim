@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Roll
+  m_Name: New Roll
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -84538,7 +84538,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.0666667
+  - time: 1.0333333
     functionName: EndAction
     data: 
     objectReferenceParameter: {fileID: 0}

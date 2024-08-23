@@ -287,7 +287,7 @@ public class NewPlayerController : MonoBehaviour
 
         MovePelvisHeight();
 
-        anim.SetIKPositionWeight(AvatarIKGoal.RightFoot, anim.GetFloat(rightFootAnimVariableName));
+        anim.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1f);
 
         if(useProIkFeature)
         {
@@ -297,7 +297,7 @@ public class NewPlayerController : MonoBehaviour
         MoveFeetToIkPoint(AvatarIKGoal.RightFoot, rightFootIkPosition, rightFootIkRotation, ref lastRightFootPositionY);
 
 
-        anim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, anim.GetFloat(leftFootAnimVariableName));
+        anim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1f);
 
         if (useProIkFeature)
         {

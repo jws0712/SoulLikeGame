@@ -268,7 +268,8 @@ public class NewPlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(enableFeetIK == false) { return; }
+        if (!isGround) { return; }
+        if (enableFeetIK == false) { return; }
         if(anim == null) { return; }
 
         AdjustTarget(ref rightFootPosition, HumanBodyBones.RightFoot);
@@ -280,6 +281,7 @@ public class NewPlayerController : MonoBehaviour
 
     private void OnAnimatorIK(int layerIndex)
     {
+        if (!isGround) { return; }
         if (enableFeetIK == false) { return; }
         if (anim == null) { return; }
 

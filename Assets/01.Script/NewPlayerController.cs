@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 
 public class NewPlayerController : MonoBehaviour
 {
+    #region Player
     [Header("PlayerMovementSetting")]
     [SerializeField] private float airMoveSpeed = default;
     [SerializeField] private float spinSpeed = default;
@@ -18,27 +19,7 @@ public class NewPlayerController : MonoBehaviour
     [Header("Physics")]
     [SerializeField] private float groundedGravity = default;
 
-    #region IK
-    private Vector3 rightFootPosition, leftFootPosition, leftFootIkPosition, rightFootIkPosition;
-    private Quaternion leftFootIkRotation, rightFootIkRotation;
-    private float lastPelvisPositionY, lastRightFootPositionY, lastLeftFootPositionY;
 
-    [Space(20f)]
-    [Header("Feet Grounder")]
-    public bool enableFeetIK = true;
-    [Range(0f, 2f)][SerializeField] private float heightFromGroundRaycast = 1.4f;
-    [Range(0f, 2f)][SerializeField] private float raycastDownDistance = 1.5f;
-    [SerializeField] private LayerMask environmentLayer;
-    [SerializeField] private float pelvisOffset = 0f;
-    [Range(0f, 1f)][SerializeField] private float pelvisUpAndDownSpeed = 0.28f;
-    [Range(0f, 1f)][SerializeField] private float feetToIkPositionSpeed = 0.5f;
-
-    public string leftFootAnimVariableName = "LeftFootCurve";
-    public string rightFootAnimVariableName = "RightFootCurve";
-
-    public bool useProIkFeature = false;
-    public bool showSolverDebug = true;
-    #endregion
 
     private float gravity = default;
     private float moveAmount = default;
@@ -58,8 +39,32 @@ public class NewPlayerController : MonoBehaviour
     private bool isJump = default;
     private bool isAction = default;
     private bool isGround = default;
+    #endregion
 
+    #region IK
+    private Vector3 rightFootPosition, leftFootPosition, leftFootIkPosition, rightFootIkPosition;
+    private Quaternion leftFootIkRotation, rightFootIkRotation;
+    private float lastPelvisPositionY, lastRightFootPositionY, lastLeftFootPositionY;
 
+    [Space(20f)]
+    [Header("Feet Grounder")]
+    public bool enableFeetIK = true;
+    [Range(0f, 2f)][SerializeField] private float heightFromGroundRaycast = 1.4f;
+    [Range(0f, 2f)][SerializeField] private float raycastDownDistance = 1.5f;
+
+    [SerializeField] private LayerMask environmentLayer;
+
+    [SerializeField] private float pelvisOffset = 0f;
+    [Range(0f, 1f)][SerializeField] private float pelvisUpAndDownSpeed = 0.28f;
+    [Range(0f, 1f)][SerializeField] private float feetToIkPositionSpeed = 0.5f;
+    [SerializeField] private string leftFootAnimVariableName = "LeftFootCurve";
+    [SerializeField] private string rightFootAnimVariableName = "RightFootCurve";
+
+    [SerializeField] private bool useProIkFeature = false;
+    [SerializeField] private bool showSolverDebug = true;
+
+    private float lastDownRayDistance = default;
+    #endregion
 
     //컴포넌트 초기화
     private void Awake()
@@ -69,15 +74,25 @@ public class NewPlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
     }
 
+    private void Start()
+    {
+        lastDownRayDistance = raycastDownDistance;
+    }
+
     private void Update()
     {
-        enableFeetIK = !isAction;
+        Debug.Log(raycastDownDistance);
+        //enableFeetIK = !isAction;
+
         inputMagnitude = playerView.Dir.magnitude;                                          //플레이어의 방향값의 크기를 구함
         moveAmount = Mathf.Abs(playerInput.Horizontal) + Mathf.Abs(playerInput.Vertical);   // 플레이어가 이동한 거리의 절대값을 계산함
 
         PlayerAction();
         SetPlayerAnimationState();
         AirMove();
+
+
+
     }
 
     #region PlayerFunc
@@ -162,6 +177,8 @@ public class NewPlayerController : MonoBehaviour
 
         if (cc.isGrounded)
         {
+            raycastDownDistance = lastDownRayDistance;
+
             anim.SetBool("isGround", true);
             isGround = true;
 
@@ -177,9 +194,11 @@ public class NewPlayerController : MonoBehaviour
             if (!isAction && Input.GetKeyDown(KeyCode.F))
             {
                 isGround = false;
+                isJump = true;
+                
                 gravity = jumpPower;
                 anim.SetBool("isJump", true);
-                isJump = true;
+                
             }
         }
         else
@@ -189,22 +208,21 @@ public class NewPlayerController : MonoBehaviour
                 gravity = 0;
                 isGround = false;
                 anim.SetBool("isFall", true);
+                
             }
 
             anim.SetBool("isGround", false);
             gravity += Physics.gravity.y * gravityMultiplier * Time.deltaTime;
+            raycastDownDistance = 0f;
 
 
-            
 
-            if((isJump && gravity < 0) || gravity < -groundedGravity)
+            if ((isJump && gravity < 0) || gravity < -groundedGravity)
             {
                 anim.SetBool("isFall", true);
             }
 
         }
-
-        Debug.Log(cc.isGrounded);
     }
 
     /// <summary>
@@ -268,12 +286,11 @@ public class NewPlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isGround) { return; }
         if (enableFeetIK == false) { return; }
         if(anim == null) { return; }
 
-        AdjustTarget(ref rightFootPosition, HumanBodyBones.RightFoot);
-        AdjustTarget(ref leftFootPosition, HumanBodyBones.LeftFoot);
+        AdjustTarget(ref rightFootPosition, HumanBodyBones.RightFoot); //오른쪽발
+        AdjustTarget(ref leftFootPosition, HumanBodyBones.LeftFoot); //왼쪽발
 
         FeetPositionSolver(rightFootPosition, ref rightFootIkPosition, ref rightFootIkRotation);
         FeetPositionSolver(leftFootPosition, ref leftFootIkPosition, ref leftFootIkRotation);
@@ -281,7 +298,9 @@ public class NewPlayerController : MonoBehaviour
 
     private void OnAnimatorIK(int layerIndex)
     {
-        if (!isGround) { return; }
+
+
+        
         if (enableFeetIK == false) { return; }
         if (anim == null) { return; }
 
@@ -292,17 +311,14 @@ public class NewPlayerController : MonoBehaviour
         if(useProIkFeature)
         {
             anim.SetIKRotationWeight(AvatarIKGoal.RightFoot, anim.GetFloat(rightFootAnimVariableName));
-            Debug.Log("Left_Pro");
         }
         MoveFeetToIkPoint(AvatarIKGoal.RightFoot, rightFootIkPosition, rightFootIkRotation, ref lastRightFootPositionY);
-
 
         anim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1f);
 
         if (useProIkFeature)
         {
             anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, anim.GetFloat(leftFootAnimVariableName));
-            Debug.Log("Left_Pro");
         }
         MoveFeetToIkPoint(AvatarIKGoal.LeftFoot, leftFootIkPosition, leftFootIkRotation, ref lastLeftFootPositionY);
     }
@@ -331,16 +347,23 @@ public class NewPlayerController : MonoBehaviour
 
     private void MovePelvisHeight()
     {
+        //레이가 닫지 않았을때 
         if (rightFootIkPosition == Vector3.zero || leftFootIkPosition == Vector3.zero || lastPelvisPositionY == 0)
         {
             lastPelvisPositionY = anim.bodyPosition.y;
             return;
         }
+            
+        if(!isGround) { return; }
 
-        float lOffsetPosition = leftFootIkPosition.y - transform.position.y;
-        float rOffsetPosition = rightFootIkPosition.y - transform.position.y;
 
-        float totalOffset = (lOffsetPosition < rOffsetPosition) ? lOffsetPosition : rOffsetPosition;
+        float leftOffsetPosition = leftFootIkPosition.y - transform.position.y; //현재 y값과 왼쪽발의 IK값의 사이의 길이를 구함
+        float rightOffsetPosition = rightFootIkPosition.y - transform.position.y; //현재 y값과 오른쪽발의 IK값의 사이의 길이를 구함
+        //양수이면 y값 보다 높은것임 (경사에서 높은 발의 지점)
+        //음수이면 y값 보다 낮은것임 (경사에서 낮은 발의 지점)
+
+        float totalOffset = (leftOffsetPosition < rightOffsetPosition) ? leftOffsetPosition : rightOffsetPosition;
+
 
         Vector3 newPelvisPosition = anim.bodyPosition + Vector3.up * totalOffset;
 
@@ -359,25 +382,29 @@ public class NewPlayerController : MonoBehaviour
             Debug.DrawLine(fromSkyPosition, fromSkyPosition + Vector3.down * (raycastDownDistance + heightFromGroundRaycast), Color.yellow);
         }
 
+        //지정해준 레이어에 닫는다면 실행
         if (Physics.Raycast(fromSkyPosition, Vector3.down, out feetOutHit, raycastDownDistance + heightFromGroundRaycast, environmentLayer))
         {
+            //받은 포지션을 레이에 닫은 y값으로 바꾼다
             feetIkPositions = fromSkyPosition;
+
             feetIkPositions.y = feetOutHit.point.y + pelvisOffset;
+
             feetIkRotations = Quaternion.FromToRotation(Vector3.up, feetOutHit.normal) * transform.rotation;
+            //현재의 값을 곱하면 로컬 좌표기준으로 바뀐다
 
             return;
         }
 
+        //닫지 않으면 초기화
         feetIkPositions = Vector3.zero;
     }
 
-    private void AdjustTarget(ref Vector3 feelPositions, HumanBodyBones foot)
+    //받은 포지션을 뼈의 포지션으로 옮긴다
+    private void AdjustTarget(ref Vector3 feetPosition, HumanBodyBones foot)
     {
-        feelPositions = anim.GetBoneTransform(foot).position;
-        feelPositions.y = transform.position.y + heightFromGroundRaycast;
+        feetPosition = anim.GetBoneTransform(foot).position; //받은 포지션을 뼈의 포지션으로 옮긴다
+        feetPosition.y = transform.position.y + heightFromGroundRaycast; //뼈로 옮긴 포지션의 y값에 현제 y값에 레이케스트의 길이만큼 더한다 
     }
-
-
     #endregion
-
 }

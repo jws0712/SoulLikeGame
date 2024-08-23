@@ -239,10 +239,10 @@ MonoBehaviour:
   jumpPower: 5
   gravityMultiplier: 1.5
   playerView: {fileID: 1709075308}
-  groundedGravity: 33
+  groundedGravity: 50
   enableFeetIK: 1
-  heightFromGroundRaycast: 1.4
-  raycastDownDistance: 1.5
+  heightFromGroundRaycast: 0.6
+  raycastDownDistance: 0.9
   environmentLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -795,7 +795,7 @@ Transform:
   m_GameObject: {fileID: 546978374}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.2588191, w: 0.9659258}
-  m_LocalPosition: {x: 1.2247622, y: 1.05, z: -16.67}
+  m_LocalPosition: {x: 1.454, y: 1.05, z: -15.812}
   m_LocalScale: {x: 4.92, y: 0.1976528, z: 6.72}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1602,8 +1602,8 @@ Transform:
   m_GameObject: {fileID: 933032926}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.361, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -11.5413, y: 0, z: 0}
+  m_LocalScale: {x: 12.2774, y: 12.2774, z: 12.2774}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

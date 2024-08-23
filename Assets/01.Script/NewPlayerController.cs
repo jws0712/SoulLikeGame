@@ -287,21 +287,21 @@ public class NewPlayerController : MonoBehaviour
 
         MovePelvisHeight();
 
-        anim.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1f);
+        anim.SetIKPositionWeight(AvatarIKGoal.RightFoot, anim.GetFloat(rightFootAnimVariableName));
 
         if(useProIkFeature)
         {
-            anim.SetIKRotationWeight(AvatarIKGoal.RightFoot, 1f);
+            anim.SetIKRotationWeight(AvatarIKGoal.RightFoot, anim.GetFloat(rightFootAnimVariableName));
             Debug.Log("Left_Pro");
         }
         MoveFeetToIkPoint(AvatarIKGoal.RightFoot, rightFootIkPosition, rightFootIkRotation, ref lastRightFootPositionY);
 
 
-        anim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1f);
+        anim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, anim.GetFloat(leftFootAnimVariableName));
 
         if (useProIkFeature)
         {
-            anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 1f);
+            anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, anim.GetFloat(leftFootAnimVariableName));
             Debug.Log("Left_Pro");
         }
         MoveFeetToIkPoint(AvatarIKGoal.LeftFoot, leftFootIkPosition, leftFootIkRotation, ref lastLeftFootPositionY);

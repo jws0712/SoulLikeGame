@@ -39,12 +39,14 @@ namespace SOUL.Player
         private bool isAction = default;
         private bool isGround = default;
 
+        private int hashAttackCount = Animator.StringToHash("AttackCount");
+
         private PlayerIKSystem playerIK = null;
 
         public bool IsGround => isGround;
         public bool IsAction => isAction;
 
-
+        public int AttackCount { get => anim.GetInteger(hashAttackCount); set => anim.SetInteger(hashAttackCount, value); }
 
         //컴포넌트 초기화
         private void Awake()
@@ -228,6 +230,7 @@ namespace SOUL.Player
         {
             SetPhysics();
             RollAndRunAction();
+            Attack();
         }
 
         /// <summary>
@@ -292,6 +295,14 @@ namespace SOUL.Player
                 gravity = jumpPower;
                 anim.SetBool("isJump", true);
                 isJump = true;
+            }
+        }
+
+        private void Attack()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                anim.SetTrigger("Attack");
             }
         }
 

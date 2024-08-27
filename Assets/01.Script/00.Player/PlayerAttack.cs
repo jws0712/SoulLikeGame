@@ -15,6 +15,6 @@ namespace SOUL.Player
         }
 
         //프로퍼티
-        public int AttackCount { get => animator.GetInteger(hashAttackCount); set => animator.SetInteger(hashAttackCount, value); }
+        
     }
 }

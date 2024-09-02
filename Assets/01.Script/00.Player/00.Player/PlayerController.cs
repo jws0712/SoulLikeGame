@@ -10,7 +10,7 @@ namespace SOUL.Player
     using Unity.VisualScripting;
     using UnityEngine.EventSystems;
 
-    public class NewPlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour
     {
         [Header("PlayerMovementSetting")]
         [SerializeField] private float airMoveSpeed = default;
@@ -36,7 +36,6 @@ namespace SOUL.Player
 
         private bool isPress = default;
         private bool isJump = default;
-        private bool isAction = default;
         private bool isGround = default;
 
         private int hashAttackCount = Animator.StringToHash("AttackCount");
@@ -44,7 +43,7 @@ namespace SOUL.Player
         private PlayerIKSystem playerIK = null;
 
         public bool IsGround => isGround;
-        public bool IsAction => isAction;
+        public bool isAction = default;
 
         public int AttackCount { get => anim.GetInteger(hashAttackCount); set => anim.SetInteger(hashAttackCount, value); }
 
@@ -300,8 +299,9 @@ namespace SOUL.Player
 
         private void Attack()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (!isAction && !isJump && Input.GetMouseButtonDown(0))
             {
+
                 anim.SetTrigger("Attack");
             }
         }

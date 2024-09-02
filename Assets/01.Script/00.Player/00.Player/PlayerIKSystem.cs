@@ -30,7 +30,7 @@ public class PlayerIKSystem : MonoBehaviour
    [HideInInspector] public float lastUpRayDistance = default;
 
     private Animator anim = null;
-    private NewPlayerController playerController = null;
+    private PlayerController playerController = null;
 
 
     #endregion
@@ -38,7 +38,7 @@ public class PlayerIKSystem : MonoBehaviour
     private void Awake()
     {
         anim = GetComponent<Animator>();
-        playerController = GetComponent<NewPlayerController>();
+        playerController = GetComponent<PlayerController>();
     }
 
     #region FootIK
@@ -111,7 +111,7 @@ public class PlayerIKSystem : MonoBehaviour
         }
 
         if (playerController.IsGround == false) { return; }
-        if (playerController.IsAction) { return; }
+        if (playerController.isAction) { return; }
 
 
         float leftOffsetPosition = leftFootIkPosition.y - transform.position.y; //현재 y값과 왼쪽발의 IK값의 사이의 길이를 구함

@@ -136,7 +136,6 @@ GameObject:
   - component: {fileID: 55482933}
   - component: {fileID: 55482935}
   - component: {fileID: 55482936}
-  - component: {fileID: 55482937}
   - component: {fileID: 55482934}
   m_Layer: 0
   m_Name: PlayerModelCharactorController
@@ -268,18 +267,6 @@ MonoBehaviour:
     m_Bits: 128
   lastDownRayDistance: 0
   lastUpRayDistance: 0
---- !u!114 &55482937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 55482930}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52322a29f489a444499e277c0020c6e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &76650698
 GameObject:
   m_ObjectHideFlags: 0
